@@ -1,49 +1,51 @@
 // src/components/AuthUser.tsx
-//
-// COMPONENTE DE PRESENTACIÓN DEL USUARIO AUTENTICADO.
-//
-// ¿Qué hace?
-// - Lee el usuario actual desde el store global de autenticación (useAuthStore).
-// - Si hay usuario logueado: muestra nombre y correo.
-// - Si NO hay usuario: muestra un mensaje neutro "Usuario no autenticado".
-//
-// ¿Quién lo usa?
-// - FeedPage: arriba del feed, para mostrar quién está logueado.
-// - PostDetailPage: arriba del detalle de post, por la misma razón.
-//
-// ¿Con qué se conecta?
-// - useAuthStore de src/store/authStore.ts
-
 "use client";
-// 'use client' porque usamos hooks (zustand) en este componente.
+
+/**
+ * COMPONENTE: AuthUser
+ *
+ * Responsabilidad:
+ * - Leer el usuario autenticado desde el store global (useAuthStore).
+ * - Mostrar su información básica: nombre, email, ciudad, userId.
+ * - Si no hay usuario (no logueado o no hidratado todavía), mostrar un texto neutro.
+ *
+ * ¿Quién lo usa?
+ * - EventsPage (/events): arriba del listado de eventos.
+ * - EventDetailPage (/events/[id]): arriba del detalle del evento.
+ * - (Opcional) ProfilePage: podrías reutilizarlo, aunque ahí ya mostramos más detalle.
+ */
 
 import { useAuthStore } from "@/store/authStore";
 
 export default function AuthUser() {
-  // Leemos 'user' del store global de auth (puede ser un objeto o null)
+  // Leemos user del store global de auth
   const user = useAuthStore((state) => state.user);
 
   // Si no hay usuario, mostramos algo neutro.
-  // En un parcial real podría ser un skeleton o un texto tipo "No autenticado".
   if (!user) {
     return (
-      <section className="border-b p-4 mb-4">
+      <section className="border-b p-4 mb-4 bg-white">
         <p className="text-sm text-gray-500">
-          Usuario no autenticado
+          Usuario no autenticado.
         </p>
       </section>
     );
   }
 
-  // Si sí hay usuario, mostramos su nombre y correo.
   return (
-    <section className="border-b p-4 mb-4 flex flex-col gap-1">
+    <section className="border-b p-4 mb-4 bg-white flex flex-col gap-1">
       <p className="text-sm text-gray-500">Sesión iniciada como:</p>
-      <p className="font-semibold">
-        {user.name}{" "}
-        <span className="text-gray-500 text-xs">
-          ({user.email})
-        </span>
+      <p className="font-semibold text-sm">
+        {user.name}
+      </p>
+      <p className="text-xs text-gray-600">
+        Email: {user.email}
+      </p>
+      <p className="text-xs text-gray-600">
+        Ciudad: {user.city}
+      </p>
+      <p className="text-[11px] text-gray-400">
+        ID de usuario: {user.userId}
       </p>
     </section>
   );

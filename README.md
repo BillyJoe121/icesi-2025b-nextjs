@@ -221,6 +221,25 @@ export default function PostList({ posts }: Props) {
 }
 ```
 
+  events
+  login
+  profile
+  users
+  layout
+layout
+
+AuthUser
+EventFilters
+EventForm
+EventItem
+EventList
+RegisterButton
+
+api.ts
+types
+authStore
+
+
 Mientras tenga:
 
 * export default o named export como pidan los tests
@@ -308,4 +327,43 @@ Para que no te ahogues:
 5. Volver a `npm test` → ir implementando funcionalidad de login/feeds/comentarios en ese orden.
 6. Cada cambio importante → `npm test` otra vez.
 
-Si sigues eso, aunque el profe se ponga creativo, no deberías salir del parcial en modo “no compila nada”. Te toca sudar el código tú, pero por lo menos ya sabes qué tocar y en qué orden.
+
+
+
+## 4. API: lo ÚNICO crítico que sí tienes que adaptar en el examen
+
+En el parcial real, estas son las 3 cosas que vas a tener que revisar / cambiar:
+
+1. **URL base** en `api.ts`
+
+   ```ts
+   const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+   ```
+
+   y en `.env.local`:
+
+   ```env
+   NEXT_PUBLIC_API_URL=http://IP_O_PUERTO_QUE_DE_EL_PROFE
+   ```
+
+2. **Forma exacta de la respuesta de `/login`**
+   Tu código asume:
+
+   ```json
+   { "token": "...", "user": { ... } }
+   ```
+
+   Si el backend devuelve algo distinto (`accessToken`, `data`, etc.), ajustas **solo** `loginApi`:
+
+   ```ts
+   const res = await apiFetch<{ accessToken: string; user: User }>("/login", {...});
+   return { token: res.accessToken, user: res.user };
+   ```
+
+3. **Campos de las entidades**
+   Si el profe cambia, por ejemplo, `eventId` → `id` o `createdBy` → `ownerId`, corriges:
+
+   * el tipo `Event` en `types.ts`
+   * los puntos donde accedes a esos campos (`event.eventId`, etc.)
+
+Eso es todo. No tienes que desarmar media app, solo alinear las formas de los objetos.

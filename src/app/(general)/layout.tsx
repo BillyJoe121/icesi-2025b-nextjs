@@ -1,67 +1,64 @@
-// ESTE ES EL LAYOUT DEL GRUPO DE RUTAS (general)
+// src/app/(general)/layout.tsx
 //
-// Estructura de Next:
-//   - app/layout.tsx                → layout raíz de TODA la app
-//   - app/(general)/layout.tsx      → layout específico para el "route group" (general)
+// LAYOUT DEL GRUPO (general)
 //
-// Todo lo que esté dentro de la carpeta app/(general)/
-// se va a renderizar dentro de ESTE layout.
+// Todas las rutas dentro de app/(general)/... se renderizan dentro de este layout.
+// Ejemplos:
+//   - /login
+//   - /events
+//   - /events/[id]
+//   - /profile
+//   - /users/new
 //
-// Es decir, páginas como:
-//   - app/(general)/login/page.tsx
-//   - app/(general)/feed/page.tsx
-//   - app/(general)/posts/[id]/page.tsx
-// aparecerán envueltas por este layout.
+// Responsabilidad:
+// - Definir un "marco" visual común para estas páginas.
+// - (Opcional) Mostrar un navbar simple con enlaces básicos.
 //
-// Responsabilidad de este archivo:
-//   - Definir metadata de esta sección
-//   - Envolver las páginas con providers necesarios (ej: CounterStoreProvider)
-//   - Mostrar la barra de navegación (NavBar) que aparecerá en todas las páginas
-//   - Renderizar {children}, que es la página concreta.
+// Importante:
+// - NO metemos lógica de autenticación aquí; esa vive en cada página
+//   usando useAuthStore y redirecciones.
+// - Este layout es un Server Component (no usamos hooks), por eso NO lleva "use client".
 
-import { NavBar } from "@/components/nav-bar/NavBar";
-// NavBar: componente que probablemente hizo el profe.
-// Ruta típica: src/components/nav-bar/NavBar.tsx
-// Se muestra en todas las páginas de (general).
+import type { ReactNode } from "react";
+import Link from "next/link";
 
-import { CounterStoreProvider } from "../providers/counter-store-provider";
-// CounterStoreProvider: provider que envuelve el árbol de React
-// para que cualquier página dentro de (general) pueda usar un store de contador.
-// Es algo de ejemplo del profe; no afecta directamente a login/feed/posts,
-// pero sí sirve de plantilla para ver cómo envolver con providers.
-
-// Metadata específica para este grupo de rutas.
 export const metadata = {
-  title: "General",
-  description: "Paginas con autenticación",
+  title: "Zona general",
+  description: "Páginas principales con autenticación",
 };
 
-// Componente de layout. Recibe 'children':
-//   - 'children' es la página concreta que se esté renderizando.
-//   - Por ejemplo, si visitas /feed, 'children' será <FeedPage />.
-//   - Si visitas /login, 'children' será <LoginPage />.
-export default function GeneralLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function GeneralLayout({ children }: { children: ReactNode }) {
   return (
-    // Envolvemos todo con CounterStoreProvider para que los componentes dentro
-    // puedan usar el contexto/store de contador si lo necesitan.
-    <CounterStoreProvider>
-      {/* La barra de navegación se muestra siempre en la parte superior */}
-      <NavBar />
+    <html lang="es">
+      <body className="bg-gray-100">
+        {/* Navbar muy simple, suficiente para navegar en el parcial */}
+        <header className="bg-white border-b mb-4">
+          <nav className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div className="font-semibold text-sm">
+              Gestor de eventos
+            </div>
+            <div className="flex gap-3 text-sm">
+              <Link href="/events" className="hover:underline">
+                Eventos
+              </Link>
+              <Link href="/profile" className="hover:underline">
+                Perfil
+              </Link>
+              <Link href="/users/new" className="hover:underline">
+                Nuevo usuario
+              </Link>
+              <Link href="/login" className="hover:underline">
+                Login
+              </Link>
+            </div>
+          </nav>
+        </header>
 
-      {/* Título fijo que se verá en todas las páginas del grupo (general).
-          Es solo un ejemplo; podrías quitarlo en el parcial real. */}
-      <h1>Hello Root and MetaData</h1>
-
-      {/* Aquí se inserta el contenido específico de cada ruta:
-          - FeedPage
-          - LoginPage
-          - PostDetailPage
-          etc. */}
-      {children}
-    </CounterStoreProvider>
+        {/* Contenido específico de cada página */}
+        <div className="max-w-4xl mx-auto px-4">
+          {children}
+        </div>
+      </body>
+    </html>
   );
 }
